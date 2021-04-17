@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  description: lighthouse  20210117
+  title: lighthouse
+  version: 1.0.0
+servers:
+- url: https://lighthouse.lbry.com
+tags:
+- description: 搜尋引擎
+  externalDocs:
+    description: Find out more
+    url: https://github.com/lbryio/lighthouse
+  name: Lighthouse
+paths:
+  /search:
+    get:
+      operationId: SearchByString
+      parameters:
+      - description: 關鍵字
+        explode: true
+        in: query
+        name: s
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: array size (回傳數量)
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: 第幾頁
+        explode: true
+        in: query
+        name: from
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: 搜尋包含這個關鍵字的頻道中的內容
+        explode: true
+        in: query
+        name: channel
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 測試只會回傳空集合 20210117
+        explode: true
+        in: query
+        name: channel_id
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 與...影片相關 參數為claimId
+        explode: true
+        in: query
+        name: related_to
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: (開發中)參數release_time https://github.com/lbryio/lighthouse/issues/12
+        explode: true
+        in: query
+        name: sort_by
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: https://github.com/lbryio/lighthouse/issues/12
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 成人模式 false:close
+        explode: true
+        in: query
+        name: nsfw
+        required: false
+        schema:
+          default: false
+          type: boolean
+        style: form
+      - description: 只搜尋免費內容
+        explode: true
+        in: query
+        name: free_only
+        required: false
+        schema:
+          default: true
+          type: boolean
+        style: form
+      - description: 顯示完整資訊
+        explode: true
+        in: query
+        name: resolve
+        required: false
+        schema:
+          default: false
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SearchResponse'
+                type: array
+          description: 關鍵字取得LBRY
+        "400":
+          description: 查無資料或未輸入關鍵字或關鍵字小於3個字元(中文不受此限制)
+      summary: 字串搜尋
+      tags:
+      - Lighthouse
+  /autocomplete:
+    get:
+      operationId: SearchAutoComplete
+      parameters:
+      - description: 關鍵字
+        explode: true
+        in: query
+        name: s
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: array size (回傳數量)
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: 第幾頁
+        explode: true
+        in: query
+        name: from
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: 成人模式 false:close
+        explode: true
+        in: query
+        name: nsfw
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            array:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: 自動完成建議
+      summary: 搜尋自動完成建議
+      tags:
+      - Lighthouse
+components:
+  schemas:
+    SearchResponse:
+      example:
+        name: '@Hello,goodbye'
+        claimId: 3d1d4bed0aca8dc152231923572514fd3b00cb34
+      properties:
+        claimId:
+          example: 3d1d4bed0aca8dc152231923572514fd3b00cb34
+          type: string
+        name:
+          example: '@Hello,goodbye'
+          type: string
+      type: object
