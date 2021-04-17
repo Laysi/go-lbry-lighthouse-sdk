@@ -1,0 +1,150 @@
+openapi: 3.0.0
+info:
+  description: lighthouse  20210117
+  version: "1.0.0"
+  title: lighthouse
+servers:
+  - url: https://lighthouse.lbry.com
+tags:
+  - name: Lighthouse
+    description: 搜尋引擎
+    externalDocs:
+      description: Find out more
+      url: 'https://github.com/lbryio/lighthouse'
+
+
+paths:
+  /search:
+    get:
+      tags:
+        - Lighthouse
+      summary: 字串搜尋
+      operationId: SearchByString
+      parameters:
+        - name: s
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 關鍵字
+        - name: size
+          in: query
+          schema:
+            type: integer
+          description: array size (回傳數量)
+        - name: from
+          in: query
+          schema:
+            type: integer    
+            default: 0   
+          description: 第幾頁
+        - name: channel
+          in: query
+          schema:
+            type: string
+          description: 搜尋包含這個關鍵字的頻道中的內容
+        - name: channel_id
+          in: query
+          schema:
+            type: string
+          description: 測試只會回傳空集合 20210117
+        - name: related_to
+          in: query
+          schema:
+            type: string
+          description: 與...影片相關 參數為claimId
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+          description: (開發中)參數release_time https://github.com/lbryio/lighthouse/issues/12
+        - name: include
+          in: query
+          schema:
+            type: string
+          description: https://github.com/lbryio/lighthouse/issues/12
+  # todo: json方式
+  #ContentType *string `json:"contentType"`
+    # MediaType   *string `json:"mediaType"`
+    # ClaimType   *string `json:"claimType"
+        - name: nsfw
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: 成人模式 false:close
+        - name: free_only
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: 只搜尋免費內容
+        - name: resolve
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: 顯示完整資訊
+      responses:
+        '200':
+          description: 關鍵字取得LBRY
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SearchResponse'
+                  type: array
+        '400':
+          description: 查無資料或未輸入關鍵字或關鍵字小於3個字元(中文不受此限制)
+          
+  
+  /autocomplete:
+    get:
+      tags:
+        - Lighthouse
+      summary: 搜尋自動完成建議
+      operationId: SearchAutoComplete
+      parameters:
+        - name: s
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 關鍵字
+        - name: size
+          in: query
+          schema:
+            type: integer
+          description: array size (回傳數量)
+        - name: from
+          in: query
+          schema:
+            type: integer    
+            default: 0   
+          description: 第幾頁
+        - name: nsfw
+          in: query
+          schema:
+            type: boolean
+            default: null
+          description: 成人模式 false:close
+      responses:
+        '200':
+          description: 自動完成建議
+          content:
+            array:
+              schema:
+                items:
+                  type: string
+
+components:
+  schemas:
+    SearchResponse:
+      type: object
+      properties:
+        claimId:
+          type: string
+          example: '3d1d4bed0aca8dc152231923572514fd3b00cb34'
+        name:
+          type: string
+          example: '@Hello,goodbye'
